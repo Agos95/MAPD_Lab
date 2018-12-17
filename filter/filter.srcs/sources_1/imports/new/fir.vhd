@@ -29,27 +29,22 @@ component flipflop is
         );
 end component;
 
-signal C0, C1, C2, C3, C4 : signed(N-1 downto 0);
-signal m0, m1, m2, m3, m4 : signed(N-1 downto 0) := (others=> '0');
--- output of the flip flop
-signal x1: std_logic_vector(N-1 downto 0):= (others=> '0');   -- signal out of fliflop between C0 and C1 (without multiplication)
-signal x2: std_logic_vector(N-1 downto 0):= (others=> '0');   -- signal out of fliflop between C1 and C2 (without multiplication)
-signal x3: std_logic_vector(N-1 downto 0):= (others=> '0');   -- signal out of fliflop between C2 and C3 (without multiplication)
-signal x4: std_logic_vector(N-1 downto 0):= (others=> '0');   -- signal out of fliflop between C3 and C4 (without multiplication)
---signal x_sum_2N: std_logic_vector(2*N-1 downto 0); -- sum of all signals multiplied by costants
-                                                   -- this is 2N bits, becuse it comes from multiplication between two N-bits signals
-signal x_sum : std_logic_vector(N-1 downto 0):= (others=> '0');     -- need to reduce x_sum to N bits
+signal C0, C1, C2, C3, C4 : signed(N-1 downto 0);                             -- multiplication coefficients
+signal m0, m1, m2, m3, m4 : signed(N-1 downto 0) := (others=> '0');           -- results after multiplications
+signal x1, x2, x3, x4     : std_logic_vector(N-1 downto 0):= (others=> '0');  -- signal out of fliflops (before C1, C2, C3, C4)
+signal x_sum              : std_logic_vector(N-1 downto 0):= (others=> '0');  -- sum of signals before last flipflop
 
 begin
 
 -- Coefficients
    -- test = [1,2,3,4,5]
    -- low pass = [0.19335315 0.20330353 0.20668665 0.20330353 0.19335315]
-C0 <= to_signed(1, N);
-C1 <= to_signed(2, N);
-C2 <= to_signed(3, N);
-C3 <= to_signed(4, N);
-C4 <= to_signed(5, N);
+   -- shift = "2^10"
+C0 <= to_signed(1993*(2**10)/10000, N);
+C1 <= to_signed(2033*(2**10)/10000, N);
+C2 <= to_signed(2066*(2**10)/10000, N);
+C3 <= to_signed(2033*(2**10)/10000, N);
+C4 <= to_signed(1933*(2**10)/10000, N);
 
 --flipflops
 f01   : flipflop port map (clk => clk, rst => rst, ff_in => x_in, ff_out => x1);
@@ -64,6 +59,6 @@ m2 <= resize(C2*signed(x2),   N);
 m3 <= resize(C3*signed(x3),   N);
 m4 <= resize(C4*signed(x4),   N);
 
-x_sum <= std_logic_vector(m0 + m1 + m2 + m3 + m4);
+x_sum <= std_logic_vector(shift_right(m0 + m1 + m2 + m3 + m4, 10));
 
 end rtl;

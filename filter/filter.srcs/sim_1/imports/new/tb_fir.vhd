@@ -66,7 +66,7 @@ p_rst : process
 
 p_in  : process
   begin
-    x_in <= std_logic_vector(to_signed(1, 16)); wait for 25 ns;
+    x_in <= std_logic_vector(to_signed(5000, 16)); wait for 25 ns;
   end process;
   
 
