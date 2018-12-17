@@ -37,7 +37,7 @@ end tb_fir;
 architecture Behavioral of tb_fir is
 
 component fir is
-  generic(N : integer := 24);
+  generic(N : integer := 16);
   Port (
      clk   : in  std_logic;
      rst   : in  std_logic;
@@ -45,24 +45,12 @@ component fir is
      y_out : out std_logic_vector(N-1 downto 0));
 end component;
 
-signal x_in, y_out: std_logic_vector(23 downto 0);
+signal x_in, y_out: std_logic_vector(15 downto 0);
 signal clk, rst   : std_logic;
---signal counter : unsigned(15 downto 0);
---signal x_signal: std_logic_vector(15 downto 0);
 
 begin
 
 uut : fir port map(clk => clk, rst => rst, x_in => x_in, y_out => y_out);
-
---x_signal <= std_logic_vector(to_signed(1, 16));
-
---p1 : process(counter) is
---  begin
---  if(clk = '1') then
---    counter <= counter + 1;
---  end if;
---  x_signal <= x_in;
---end process;
 
 p_clk : process
   begin
@@ -73,16 +61,12 @@ p_clk : process
 p_rst : process
   begin
     rst <= '0'; wait for 500 ns;
---    rst <= '0'; wait for 15 ns;
+--    rst <= '0'; wait for 500 ns;
   end process;
 
 p_in  : process
   begin
-    x_in <= std_logic_vector(to_signed(1, 24)); wait for 25 ns;
-    x_in <= std_logic_vector(to_signed(2, 24)); wait for 25 ns;
-    x_in <= std_logic_vector(to_signed(3, 24)); wait for 25 ns;
-    x_in <= std_logic_vector(to_signed(4, 24)); wait for 25 ns;
-    x_in <= std_logic_vector(to_signed(5, 24)); wait for 25 ns;
+    x_in <= std_logic_vector(to_signed(1, 16)); wait for 25 ns;
   end process;
   
 

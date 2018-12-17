@@ -1,0 +1,13 @@
+# Don't track *.log and *.jou files
+*.log
+*.jou
+*.str
+
+# Track only **/[project].srcs/ directory and the [project].xpr file
+
+**/*.cache/
+**/*.hw/
+**/*.ip_user_files/
+**/*.runs/
+**/*.sim/
+
