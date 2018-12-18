@@ -11,7 +11,7 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity fir is
-  generic(N : integer := 16); -- 16
+  generic(N : integer := 32);
   Port (
      clk   : in  std_logic;
      rst   : in  std_logic;
@@ -40,11 +40,12 @@ begin
    -- test = [1,2,3,4,5]
    -- low pass = [0.19335315 0.20330353 0.20668665 0.20330353 0.19335315]
    -- shift = "2^10"
-C0 <= to_signed(1993*(2**10)/10000, N);
+C0 <= to_signed(1933*(2**10)/10000, N);
 C1 <= to_signed(2033*(2**10)/10000, N);
 C2 <= to_signed(2066*(2**10)/10000, N);
 C3 <= to_signed(2033*(2**10)/10000, N);
 C4 <= to_signed(1933*(2**10)/10000, N);
+
 
 --flipflops
 f01   : flipflop port map (clk => clk, rst => rst, ff_in => x_in, ff_out => x1);

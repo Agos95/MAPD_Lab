@@ -32,7 +32,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity flipflop is
-  generic(N : integer := 16);
+  generic(N : integer := 32);
   Port( clk : in std_logic;
         rst : in std_logic;
         ff_in : in std_logic_vector(N-1 downto 0);

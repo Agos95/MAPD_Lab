@@ -37,7 +37,7 @@ end tb_fir;
 architecture Behavioral of tb_fir is
 
 component fir is
-  generic(N : integer := 16);
+  generic(N : integer := 32);
   Port (
      clk   : in  std_logic;
      rst   : in  std_logic;
@@ -45,7 +45,7 @@ component fir is
      y_out : out std_logic_vector(N-1 downto 0));
 end component;
 
-signal x_in, y_out: std_logic_vector(15 downto 0);
+signal x_in, y_out: std_logic_vector(31 downto 0);
 signal clk, rst   : std_logic;
 
 begin
@@ -66,7 +66,7 @@ p_rst : process
 
 p_in  : process
   begin
-    x_in <= std_logic_vector(to_signed(5000, 16)); wait for 25 ns;
+    x_in <= std_logic_vector(to_signed(5000, 32)); wait for 25 ns;
   end process;
   
 
