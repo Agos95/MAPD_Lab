@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__": 
 
    fs = 11025 # Hz -- Frequency used in the wav audio files.
-   b = signal.firwin(5, 0.1, window='boxcar')   # 5 in the number of the coefficients 
-                                                # 0.1 is the cutoff frequency
+#  b = signal.firwin(numtaps=5, cutoff=0.1, window='boxcar') # lowpass
+#  b = signal.firwin(numtaps=5, cutoff=0.9, pass_zero=False, window='boxcar') # highpass
+#  b = signal.firwin(numtaps=5, cutoff=[0.1, 0.9], window='boxcar') # bandstop
+   b = signal.firwin(numtaps=5, cutoff=[0.4, 0.6], pass_zero=False, window='boxcar') # bandpass
    w, h = signal.freqz(b)
    print ("coefficients : ")
    print (b)
