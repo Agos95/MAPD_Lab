@@ -29,7 +29,8 @@ vivado
 | 3   | counter    | Memory configuration                                                       |
 | 4   | debugg     | Debug tools (VIO, ILA)                                                     |
 | 5   | filter     | Arithmetic operations                                                      |
-|     |            |                                                                            |
+| 6   | fsm        | Finite State Machine                                                       |
+|  |  |
 
 ### VHDL naming convention
 
@@ -46,7 +47,8 @@ vivado
 | Process name           | p_name            |
 | ila signal             | ila_signal        |
 | vio signal             | vio_signal        |
-|                        |                   |
+| state name             | s_name            |
+|  |  |
 
 ## VHDL Notes
 
