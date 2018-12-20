@@ -30,7 +30,8 @@ vivado
 | 4   | debugg     | Debug tools (VIO, ILA)                                                     |
 | 5   | filter     | Arithmetic operations                                                      |
 | 6   | fsm        | Finite State Machine                                                       |
-|  |  |
+| 7   | fsm        | FSM with VIO and ILA                                                       |
+|     |            |                                                                            |
 
 ### VHDL naming convention
 
@@ -48,7 +49,7 @@ vivado
 | ila signal             | ila_signal        |
 | vio signal             | vio_signal        |
 | state name             | s_name            |
-|  |  |
+|                        |                   |
 
 ## VHDL Notes
 
