@@ -31,6 +31,7 @@ vivado
 | 5   | filter     | Arithmetic operations                                                      |
 | 6   | fsm        | Finite State Machine                                                       |
 | 7   | fsm        | FSM with VIO and ILA                                                       |
+| 8   | spi        | SPI protocol |
 |     |            |                                                                            |
 
 ### VHDL naming convention
