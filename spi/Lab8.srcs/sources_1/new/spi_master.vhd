@@ -30,10 +30,17 @@ architecture Behavioral of spi_master is
 ----------------------------------------
 
 -- states:
--- 1) send
--- 2) receive
--- 3) idle
-type state is (s_send, s_receive, s_idle);
+-- 1) idle
+      -- stard by reset to 1
+      -- 
+-- 2) send
+      -- 
+      -- signal ready = 0
+-- 3) receive
+      -- start by rising_edge(start)
+      -- after reading -> cs from 0 to 1
+      -- signal ready = 1
+type state is (s_send, s_read, s_idle);
 
 signal state_fsm : state;
    
@@ -55,11 +62,10 @@ elsif ??? then
         when s_idle =>
           if falling_edge(cs) then
             state_fsm <= s_send;
-          
+          else
+            state_fsm <= s_idle;
           end if;
         
-           
-    
         when s_send =>
           tcnt := tcnt + 1;
           if tcnt = 1 then
