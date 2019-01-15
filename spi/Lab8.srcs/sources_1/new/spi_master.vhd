@@ -47,6 +47,7 @@ type state is (s_send, s_read, s_idle);
 signal state_fsm : state;
 
 signal sclk_s, mosi_s, ready_s, cs_s : std_logic;
+signal start_p : std_logic;
 signal bufout : std_logic_vector(TXBITS-1 downto 0); -- store READ+address (24 bits)
 signal bufin  : std_logic_vector(RXBITS-1 downto 0); -- store data (8 bits)
    
@@ -67,19 +68,25 @@ variable tcnt, rcnt, wcnt : integer;  -- tcnt -> time counter
 begin
 
 cs_s <= '1';
+--start_p <= '0';
 
 if reset = '1' then
   cs_s <= '0';
   state_fsm <= s_idle;
+elsif rising_edge(clock) then
+  start_p <= start;
 
-else
   case state_fsm is
   
     when s_idle =>
-      if rising_edge(start) then
-        tcnt := 0;
-        wcnt := TXBITS - 1; 
+      --if rising_edge(start) then  -- use rising_edge only for clock signals
+                                    -- initialize variable in 'reset' or befor 'if'
+      tcnt := 0;
+      wcnt := TXBITS - 1;
+      if start = '1' and start_p = '0' then  -- simulate rising_edge(start)    
         state_fsm <= s_send;
+      else
+        state_fsm <= s_idle;
       end if;
         
     when s_send => -- send the command (= READ) + address

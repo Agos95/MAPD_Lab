@@ -1,10 +1,10 @@
 // Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2018.2 (win64) Build 2258646 Thu Jun 14 20:03:12 MDT 2018
-// Date        : Sat Jan 12 18:04:44 2019
+// Date        : Tue Jan 15 11:36:42 2019
 // Host        : XPS15-Agostini running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
-//               d:/Desktop/University/Magistrale/Anno1_Sem1/MAPD/FPGA/MAPD_Lab/spi/Lab8.srcs/sources_1/ip/ila_0/ila_0_stub.v
+//               D:/Desktop/University/Magistrale/Anno1_Sem1/MAPD/FPGA/MAPD_Lab/spi/Lab8.srcs/sources_1/ip/ila_0/ila_0_stub.v
 // Design      : ila_0
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a35tcsg324-1

@@ -83,7 +83,7 @@ begin
       );
       
    flash_w_o   <= '0';
-   flash_mosi_o <= flash_mosi_s;
+   flash_mosi_o <= flash_mosi_s; --flash_mosi_s / '1'
    flash_miso_s <= flash_miso_i;
    flash_clk_o  <= flash_clk_s;
    flash_cs_o   <= flash_cs_s;   
