@@ -67,12 +67,14 @@ variable tcnt, rcnt, wcnt : integer;  -- tcnt -> time counter
 
 begin
 
-cs_s <= '1';
---start_p <= '0';
 
 if reset = '1' then
-  cs_s <= '0';
+  cs_s <= '1';
+  mosi_s <= '1';
+  sclk_s <= '0';
   state_fsm <= s_idle;
+  ready_s <= '0';
+  
 elsif rising_edge(clock) then
   start_p <= start;
 
@@ -83,7 +85,11 @@ elsif rising_edge(clock) then
                                     -- initialize variable in 'reset' or befor 'if'
       tcnt := 0;
       wcnt := TXBITS - 1;
+      cs_s <= '1'; --> there is not commuunication between master and slave
+      ready_s <= '0';
+      
       if start = '1' and start_p = '0' then  -- simulate rising_edge(start)    
+        bufout <= txd;
         state_fsm <= s_send;
       else
         state_fsm <= s_idle;
@@ -92,6 +98,9 @@ elsif rising_edge(clock) then
     when s_send => -- send the command (= READ) + address
                    -- performed TXBITS = 24 times (8 READ, 16 address)
       tcnt := tcnt + 1;  -- previously initialized at 0; used to slow down the process
+      cs_s <= '0'; --> there is commuunication between master and slave
+      ready_s <= '0';
+      
       if tcnt = 1 then -- send info to slave (1 bit)
         sclk_s <= '0'; -- master generated clock to sincro data transmission
         mosi_s <= bufout(wcnt);  -- bufout, when the start (VIO) happens, is initialized at txd
@@ -103,6 +112,7 @@ elsif rising_edge(clock) then
         if wcnt = 0 then  -- READ+address transmitted -> pass to reading state
           wcnt := TXBITS - 1; -- variable previously initialized at TXBITS - 1
           mosi_s <= '1';
+          rcnt := RXBITS - 1;
           state_fsm <= s_read;
         else -- READ+address NOT fully transmitted -> go to next bit
           wcnt := wcnt - 1;   -- variable previously initialized at TXBITS - 1
@@ -112,6 +122,8 @@ elsif rising_edge(clock) then
     when s_read => -- read data
                    -- performed RXBITS = 8 times
       tcnt := tcnt + 1;
+      cs_s <= '0'; --> there is commuunication between master and slave
+      
       if tcnt = 1 then
         sclk_s <= '0';
         bufin(rcnt) <= miso;
@@ -123,7 +135,7 @@ elsif rising_edge(clock) then
         if rcnt = 0 then  -- data read -> pass to idle state
           rcnt := RXBITS - 1; -- variable previously initialized at RXBITS - 1
           ready_s <= '1';
-          cs_s <= '1';
+          rxd <= bufin;
           state_fsm <= s_idle;
         else -- data NOT fully read -> go to next bit
           rcnt := rcnt - 1;   -- variable previously initialized at RXBITS - 1
