@@ -1,0 +1,7 @@
+Per ricompilare uhal in python3 probabilmente prima di fare il make è necessario importare le variabili:
+
+PYTHON_VERSION
+
+PYTHON_INCLUDE_PREFIX
+
+in modo che puntino alla versione 3 e non alla 2

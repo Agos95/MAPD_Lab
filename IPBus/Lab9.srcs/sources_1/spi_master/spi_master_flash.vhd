@@ -6,9 +6,9 @@ use IEEE.NUMERIC_STD.ALL;
 entity spi_master_flash is
    generic (
       WTIME    : integer   := 10000;
-	  TXBITS   : integer   := 8;
+	   TXBITS   : integer   := 8;
       RXBITS   : integer   := 8;
-	  N_BYTES  : integer   := 1		
+	   N_BYTES  : integer   := 1		
       );
    port ( 
       clock    : in  std_logic;
@@ -20,14 +20,31 @@ entity spi_master_flash is
       mosi     : out std_logic;
       sclk     : out std_logic;
       cs       : out std_logic;
-	  wr_pr_o  : out std_logic;  -- write protection
-	  rxd_out  : out std_logic_vector(RXBITS-1 downto 0);
-	  we_out   : out std_logic;
-	  addr_out : out std_logic_vector(9 downto 0)
+	   wr_pr_o  : out std_logic;  -- write protection
+	   rxd_out  : out std_logic_vector(RXBITS-1 downto 0);
+	   we_out   : out std_logic;
+	   addr_out : out std_logic_vector(9 downto 0)
       );
 end spi_master_flash;
 
 architecture Behavioral of spi_master_flash is
+
+   COMPONENT ila_0
+     PORT (
+	     clk : IN STD_LOGIC;
+
+	     probe0 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- reset
+	     probe1 : IN STD_LOGIC_VECTOR(31 DOWNTO 0); -- txd
+	     probe2 : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- rxd
+        probe3 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- start
+        probe4 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- ready
+        probe5 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- miso
+        probe6 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- mosi
+        probe7 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- sclk
+        probe8 : IN STD_LOGIC_VECTOR(0 DOWNTO 0); -- cs
+        probe9 : IN STD_LOGIC_VECTOR(3 DOWNTO 0) -- state
+      );
+   END COMPONENT  ;
 
    signal bufout  : std_logic_vector(txd'range);
    signal bufin   : std_logic_vector(RXBITS-1 downto 0);
@@ -69,7 +86,7 @@ end component;
 begin
 
 process(clock, reset) -- clock frequency 25MHz
-     variable bcnt : integer;
+    variable bcnt : integer;
 	 variable cnt  : integer;
 	 variable cnt_o : integer;
 	 variable start_p : std_logic;
@@ -77,66 +94,66 @@ process(clock, reset) -- clock frequency 25MHz
       if rising_edge(clock) then
          if reset = '1' then
             bcnt    := N_BYTES - 1;
-			cnt     := 0;
+			   cnt     := 0;
             state   <= s_idle;
             s_start <= '0';
-			ready_s <= '0';
-			cnt_o := 0;
-			addr_out <= std_logic_vector(to_unsigned(bcnt, addr_out'length ));
-			we_out <= '0';
+			   ready_s <= '0';
+			   cnt_o := 0;
+			   addr_out <= std_logic_vector(to_unsigned(bcnt, addr_out'length ));
+			   we_out <= '0';
          else
             case state is
             
             when s_idle =>
-			   s_start <= '0';
-		       ready_s <= '0';
-               state   <= s_getbyte;
-			   cnt := cnt + 1;
-			   if cnt <= WTIME then
-				  state <= s_idle;
-			   else
-				  state <= s_getbyte;
-			   end if;					
+			     s_start <= '0';
+		        ready_s <= '0';
+              state   <= s_getbyte;
+			     cnt := cnt + 1;
+			     if cnt <= WTIME then
+				    state <= s_idle;
+			     else
+				    state <= s_getbyte;
+			     end if;					
             
             when s_getbyte =>
-				ready_s <= '0';
-				if s_ready_fsm = '1' then
-				   s_start <= '0';
-				   state   <= s_buildword;
-				else
-				   s_start <= '1';
-				   s_txd(TXBITS-1 downto TXBITS-1 - 7) <= txd(TXBITS-1 downto TXBITS-1 - 7);
-				   s_txd(TXBITS-1 -8 downto 0) <= std_logic_vector(to_unsigned(to_integer(unsigned(txd(TXBITS-1 -8 downto 0)) + bcnt), TXBITS -8 ));
-				end if;
+				  ready_s <= '0';
+				  if s_ready_fsm = '1' then
+				    s_start <= '0';
+				    state   <= s_buildword;
+				  else
+				    s_start <= '1';
+				    s_txd(TXBITS-1 downto TXBITS-1 - 7) <= txd(TXBITS-1 downto TXBITS-1 - 7);
+				    s_txd(TXBITS-1 -8 downto 0) <= std_logic_vector(to_unsigned(to_integer(unsigned(txd(TXBITS-1 -8 downto 0)) + bcnt), TXBITS -8 ));
+				  end if;
 					
-			when s_buildword =>	
-			    if cnt_o < 3 then
+			   when s_buildword =>	
+			     if cnt_o < 3 then
 			       we_out <= '1';
-				   addr_out <= std_logic_vector(to_unsigned(bcnt, addr_out'length ));
-                   rxd_out <= s_rxd;
-                   cnt_o := cnt_o + 1;
-                else	
-				   if bcnt = 0 then
-                      bcnt  := N_BYTES - 1;
-                      state <= s_stop;
-                      ready_s <= '1';
-                   else
-                      bcnt  := bcnt - 1;
-                      state <= s_getbyte;
-                      ready_s <= '0';
-                   end if; 
-                   we_out <= '0';
-                   cnt_o := 0;                   
-                end if;		    			    					
+				    addr_out <= std_logic_vector(to_unsigned(bcnt, addr_out'length ));
+                rxd_out <= s_rxd;
+                cnt_o := cnt_o + 1;
+              else	
+				    if bcnt = 0 then
+                  bcnt  := N_BYTES - 1;
+                  state <= s_stop;
+                  ready_s <= '1';
+                else
+                  bcnt  := bcnt - 1;
+                  state <= s_getbyte;
+                  ready_s <= '0';
+                end if; 
+                we_out <= '0';
+                cnt_o := 0;                   
+              end if;		    			    					
             when s_stop =>		
-                  ready_s <= '1';	
-                  s_start <= '0';
-                  state <= s_stop;						
+              ready_s <= '1';	
+              s_start <= '0';
+              state <= s_stop;						
             end case;
             start_p := start;
          end if;
       end if;
-   end process;
+end process;
 
 
   flash_master : spi_master 
@@ -163,6 +180,22 @@ process(clock, reset) -- clock frequency 25MHz
    cs    <= cs_s;		
    ready <= ready_s; 
    wr_pr_o <= '0';		
+   
+   ila_debug : ila_0
+   PORT MAP (
+     clk => clock,
+   
+     probe0(0) => reset, 
+     probe1    => s_txd, 
+     probe2    => s_rxd, 
+     probe3(0) => s_start, 
+     probe4(0) => s_ready_fsm, 
+     probe5(0) => miso, 
+     probe6(0) => mosi_s, 
+     probe7(0) => sclk_s, 
+     probe8(0) => cs_s, 
+     probe9 => std_logic_vector(to_unsigned(state_t'pos(state),4))
+   );
 	
 end Behavioral;
 
